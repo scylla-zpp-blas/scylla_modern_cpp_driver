@@ -1,30 +1,30 @@
 #pragma once
 
-#include <string>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
-#include "value_converters/statement_binder.hh"
 #include "statement.hh"
+#include "value_converters/statement_binder.hh"
 
 namespace scmd {
-    class prepared_query {
-        const CassPrepared* _prepared;
+class prepared_query {
+    const CassPrepared *_prepared;
 
-    public:
-        explicit prepared_query(const CassPrepared* prepared);
+public:
+    explicit prepared_query(const CassPrepared *prepared);
 
-        // We can't really copy this class
-        prepared_query(const prepared_query& other) = delete;
-        prepared_query& operator=(const prepared_query& other) = delete;
+    // We can't really copy this class
+    prepared_query(const prepared_query &other) = delete;
+    prepared_query &operator=(const prepared_query &other) = delete;
 
-        prepared_query(prepared_query&& other) noexcept;
-        prepared_query& operator=(prepared_query&& other) noexcept;
+    prepared_query(prepared_query &&other) noexcept;
+    prepared_query &operator=(prepared_query &&other) noexcept;
 
-        statement get_statement();
+    statement get_statement();
 
-        ~prepared_query() {
-            cass_prepared_free(_prepared);
-        }
-    };
-}
+    ~prepared_query() {
+        cass_prepared_free(_prepared);
+    }
+};
+}  // namespace scmd

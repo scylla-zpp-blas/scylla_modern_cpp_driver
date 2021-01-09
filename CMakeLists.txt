@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.19)
 project(scylla_modern_cpp_driver)
 
+set(CMAKE_CXX_STANDARD 17)
+
 add_subdirectory(lib/cpp-driver EXCLUDE_FROM_ALL)
 
 set(SCYLLA_DRIVER_HEADERS
