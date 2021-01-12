@@ -17,5 +17,8 @@ prepared_query &prepared_query::operator=(prepared_query &&other) noexcept {
     std::swap(_prepared, other._prepared);
     return *this;
 }
+prepared_query::~prepared_query() {
+    cass_prepared_free(_prepared);
+}
 
 }  // namespace scmd

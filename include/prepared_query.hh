@@ -21,10 +21,8 @@ public:
     prepared_query(prepared_query &&other) noexcept;
     prepared_query &operator=(prepared_query &&other) noexcept;
 
-    statement get_statement();
+    ~prepared_query();
 
-    ~prepared_query() {
-        cass_prepared_free(_prepared);
-    }
+    statement get_statement();
 };
 }  // namespace scmd
