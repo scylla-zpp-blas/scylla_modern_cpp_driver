@@ -16,6 +16,7 @@ set(SCYLLA_DRIVER_HEADERS
         include/value_converters/tuple_binder.hh
         include/value_converters/value_retriever.hh
         include/value_converters/traits.hh
+        include/scmd.hh
         )
 
 set(SCYLLA_DRIVER_SOURCES
