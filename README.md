@@ -29,7 +29,7 @@ scmd::session session("172.19.0.2", "4092");
 scmd::statement stmt("SELECT * FROM test");
 
 # Query with parameters. You need to pass number of parameters to constructor
-scmd::statement stmt2("SELECT * FROM test WHERE param1 = ? AND param2 = ?", 2);\
+scmd::statement stmt2("SELECT * FROM test WHERE param1 = ? AND param2 = ?", 2);
 # It's important to pass variables with right types to the bind method, otherwise query will fail.
 stmt2.bind(var1, var2);
 
