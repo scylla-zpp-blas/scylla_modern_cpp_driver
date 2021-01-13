@@ -40,6 +40,13 @@ public:
         return execute_async(scmd::statement(query).bind(args...));
     }
 
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    future execute_async(const statement &statement, Args... args) {
+        return execute_async(statement.bind(args...));
+    }
+
+
     query_result execute(const statement &statement);
 
     // Convenience functions to avoid creating scd_statement manually for simple queries
@@ -53,7 +60,11 @@ public:
         return execute_async(scmd::statement(query).bind(args...)).get_result();
     }
 
-
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    query_result execute(const statement &statement, Args... args) {
+        return execute_async(statement.bind(args...)).get_result();
+    }
 
     prepared_query prepare(const std::string& query);
 };
