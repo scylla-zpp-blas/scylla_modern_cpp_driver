@@ -28,6 +28,8 @@ public:
      */
     bool next_row();
 
+    size_t row_count();
+
     /* Get the CassValue for given column in the currently processed row. */
     template <typename T>
     T get_column(const std::string &name) {

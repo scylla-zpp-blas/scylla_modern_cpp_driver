@@ -38,7 +38,7 @@ void tuple_binder_helper<double>::bind_to_tuple(CassTuple *tuple, size_t index, 
 }
 
 template <>
-void tuple_binder_helper<const std::string &>::bind_to_tuple(CassTuple *tuple, size_t index, const std::string &value) {
+void tuple_binder_helper<std::string>::bind_to_tuple(CassTuple *tuple, size_t index, std::string value) {
     throw_on_cass_error(cass_tuple_set_string(tuple, index, value.c_str()));
 }
 

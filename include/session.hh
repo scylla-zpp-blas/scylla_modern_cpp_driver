@@ -55,6 +55,6 @@ public:
 
 
 
-    prepared_query prepare(std::string query);
+    prepared_query prepare(const std::string& query);
 };
 }  // namespace scmd

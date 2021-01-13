@@ -39,8 +39,8 @@ void statement_binder_helper<double>::bind_to_statement(CassStatement *statement
 }
 
 template <>
-void statement_binder_helper<const std::string &>::bind_to_statement(CassStatement *statement, size_t index,
-                                                                     const std::string &value) {
+void statement_binder_helper<std::string>::bind_to_statement(CassStatement *statement, size_t index,
+                                                                     std::string value) {
     throw_on_cass_error(cass_statement_bind_string(statement, index, value.c_str()));
 }
 

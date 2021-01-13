@@ -39,8 +39,8 @@ void collection_appender_helper<double>::append_to_collection(CassCollection *co
 }
 
 template <>
-void collection_appender_helper<const std::string &>::append_to_collection(CassCollection *collection,
-                                                                           const std::string &value) {
+void collection_appender_helper<std::string>::append_to_collection(CassCollection *collection,
+                                                                           std::string value) {
     throw_on_cass_error(cass_collection_append_string(collection, value.c_str()));
 }
 

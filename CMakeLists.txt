@@ -36,3 +36,8 @@ message("CASS INCLUDE: " "${CASS_INCLUDE_DIR}")
 # Dirty hack - does anyone know how to do it properly?
 target_include_directories(scylla_modern_cpp_driver PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/lib/cpp-driver/include")
 target_link_libraries(scylla_modern_cpp_driver PUBLIC cassandra)
+
+# We are building as standalone project - build tests
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    add_subdirectory(tests)
+endif ()
