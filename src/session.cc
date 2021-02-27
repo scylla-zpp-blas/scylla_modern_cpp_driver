@@ -34,9 +34,13 @@ session &session::operator=(session &&other) noexcept {
 }
 
 session::~session() {
-    cass_session_close(this->_session);
-    cass_cluster_free(_cluster);
-    cass_session_free(_session);
+    if(this->_session) {
+        cass_session_close(this->_session);
+        cass_session_free(_session);
+    }
+    if(this->_cluster) {
+        cass_cluster_free(_cluster);
+    }
 }
 
 future session::execute_async(const statement &statement) {

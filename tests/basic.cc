@@ -47,4 +47,22 @@ BOOST_AUTO_TEST_CASE(drop_keyspace)
     session->execute(R"(DROP KEYSPACE test_keyspace;)");
 }
 
+BOOST_AUTO_TEST_CASE(move_semantics)
+{
+    global_config::init();
+    std::vector<scmd::session> sess_v;
+    sess_v.emplace_back(global_config::scylla_ip, global_config::scylla_port);
+    BOOST_REQUIRE_EQUAL(sess_v.size(), 1);
+    scmd::session session = std::move(sess_v.back());
+    // Alternatywnie:
+    // scmd::session session(std::move(sess_v.back()));
+    session.execute(R"(
+            CREATE KEYSPACE IF NOT EXISTS test_keyspace WITH REPLICATION = {
+                'class' : 'SimpleStrategy',
+                'replication_factor' : 1
+            };)");
+
+    session.execute(R"(DROP KEYSPACE test_keyspace;)");
+}
+
 BOOST_AUTO_TEST_SUITE_END();
