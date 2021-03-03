@@ -48,4 +48,30 @@ BOOST_AUTO_TEST_CASE(select)
     BOOST_REQUIRE(ARGS_TUPLE(2 << 16 | 2) == row);
 }
 
+BOOST_AUTO_TEST_CASE(too_many_args)
+{
+
+    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 7);
+    stmt.bind<TYPES>(ARGS(2 << 16 | 2));
+    auto future = session->execute_async(stmt);
+    BOOST_REQUIRE_THROW(future.wait(), scmd::exception);
+
+    scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 0);
+    stmt2.bind((int64_t)(2 << 16 | 2));
+    BOOST_REQUIRE_THROW(session->execute(stmt2), scmd::exception);
+}
+
+BOOST_AUTO_TEST_CASE(not_enough_many_args)
+{
+
+    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 9);
+    stmt.bind<TYPES>(ARGS(2 << 16 | 2));
+    auto future = session->execute_async(stmt);
+    BOOST_REQUIRE_THROW(future.wait(), scmd::exception);
+
+    scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 2);
+    stmt2.bind((int64_t)(2 << 16 | 2));
+    BOOST_REQUIRE_THROW(session->execute(stmt2), scmd::exception);
+}
+
 BOOST_AUTO_TEST_SUITE_END();

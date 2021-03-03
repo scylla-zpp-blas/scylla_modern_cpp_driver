@@ -10,7 +10,7 @@ private:
 public:
     explicit batch_query(CassBatchType type);
 
-    // We can't really copy this class
+    // We can't really copy this class.
     batch_query(const statement &other) = delete;
     batch_query &operator=(const statement &other) = delete;
 
@@ -29,6 +29,6 @@ public:
 
     void set_timestamp(int64_t timestamp);
 
-    void add_statement(const statement& statement);
+    void add_statement(statement& statement);
 };
 }  // namespace scmd

@@ -32,7 +32,7 @@ void scmd::future::wait() {
 scmd::query_result scmd::future::get_result() {
     const CassResult *result = cass_future_get_result(this->_future);
     if(result == nullptr) {
-    //TODO: Maybe throw error result and/or error message?
+        //TODO: Maybe throw error result and/or error message?
         scmd_internal::throw_on_cass_error(cass_future_error_code(this->_future));
     }
     return scmd::query_result(result);

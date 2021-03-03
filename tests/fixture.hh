@@ -59,7 +59,7 @@ template<class TupType, size_t... I>
 void print_tuple (const TupType& _tup, std::index_sequence<I...>)
 {
     std::cout << "(";
-    (..., (std::cout << (I == 0? "" : ", ") << std::get<I>(_tup)));
+    (..., (std::cout << (I == 0 ? "" : ", ") << std::get<I>(_tup)));
     std::cout << ")\n";
 }
 

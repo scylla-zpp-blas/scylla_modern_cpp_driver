@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(move_semantics)
     sess_v.emplace_back(global_config::scylla_ip, global_config::scylla_port);
     BOOST_REQUIRE_EQUAL(sess_v.size(), 1);
     scmd::session session = std::move(sess_v.back());
-    // Alternatywnie:
+    // Alternative version:
     // scmd::session session(std::move(sess_v.back()));
     session.execute(R"(
             CREATE KEYSPACE IF NOT EXISTS test_keyspace WITH REPLICATION = {

@@ -8,7 +8,7 @@ statement::statement(const std::string &query) : statement(query, 0) {}
 
 statement::statement(const std::string &query, size_t arg_count) {
     _stmt = cass_statement_new(query.c_str(), arg_count);
-    // TODO: set_consistency method somwhere else
+    // TODO: set_consistency method somewhere else
     cass_statement_set_consistency(_stmt, CASS_CONSISTENCY_QUORUM);
 }
 
@@ -26,7 +26,11 @@ statement::~statement() {
     cass_statement_free(_stmt);
 }
 
-CassStatement *statement::get_statement() const {
+const CassStatement *statement::get_statement() const{
+    return _stmt;
+}
+
+CassStatement *statement::get_statement() {
     return _stmt;
 }
 

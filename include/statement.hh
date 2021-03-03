@@ -26,7 +26,9 @@ public:
 
     ~statement();
 
-    [[nodiscard]] CassStatement *get_statement() const;
+    [[nodiscard]] const CassStatement *get_statement() const;
+
+    [[nodiscard]] CassStatement *get_statement();
 
     template <typename... Types>
     statement &bind(Types... args) {

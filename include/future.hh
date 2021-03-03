@@ -9,7 +9,7 @@ class future {
 public:
     explicit future(CassFuture *future);
 
-    // We can't really copy this class
+    // We can't really copy this class.
     future(const future &other) = delete;
     future &operator=(const future &other) = delete;
 
