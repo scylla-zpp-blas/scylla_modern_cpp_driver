@@ -29,6 +29,10 @@ void scmd::future::wait() {
     cass_future_wait(this->_future);
 }
 
+bool scmd::future::wait(uint64_t ms) {
+    return cass_future_wait_timed(this->_future, ms);
+}
+
 scmd::query_result scmd::future::get_result() {
     const CassResult *result = cass_future_get_result(this->_future);
     if(result == nullptr) {
@@ -46,3 +50,4 @@ scmd::prepared_query scmd::future::get_prepared() {
     }
     return scmd::prepared_query(result);
 }
+

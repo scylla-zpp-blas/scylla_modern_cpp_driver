@@ -22,6 +22,8 @@ public:
 
     void wait();
 
+    bool wait(uint64_t ms);
+
     query_result get_result();
 
     prepared_query get_prepared();

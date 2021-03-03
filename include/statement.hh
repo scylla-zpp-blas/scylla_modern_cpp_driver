@@ -36,6 +36,8 @@ public:
         return *this;
     }
 
+    void set_timeout(uint64_t timeout);
+
     void reset(size_t arg_count);
 };
 }  // namespace scmd

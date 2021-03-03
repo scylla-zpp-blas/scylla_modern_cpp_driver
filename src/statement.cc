@@ -34,7 +34,10 @@ CassStatement *statement::get_statement() {
     return _stmt;
 }
 
+void statement::set_timeout(uint64_t timeout) {
+    scmd_internal::throw_on_cass_error(cass_statement_set_request_timeout(this->_stmt, timeout));
+}
+
 void statement::reset(size_t arg_count) {
     scmd_internal::throw_on_cass_error(cass_statement_reset_parameters(_stmt, arg_count));
-}
 }  // namespace scmd

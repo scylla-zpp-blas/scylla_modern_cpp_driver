@@ -29,6 +29,8 @@ public:
 
     void set_timestamp(int64_t timestamp);
 
+    void set_timeout(uint64_t timeout);
+
     void add_statement(statement& statement);
 };
 }  // namespace scmd

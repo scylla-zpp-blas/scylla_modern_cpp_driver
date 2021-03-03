@@ -37,7 +37,10 @@ void scmd::batch_query::set_timestamp(int64_t timestamp) {
     scmd_internal::throw_on_cass_error(cass_batch_set_timestamp(this->_batch, timestamp));
 }
 
+void scmd::batch_query::set_timeout(uint64_t timeout) {
+    scmd_internal::throw_on_cass_error(cass_batch_set_request_timeout(this->_batch, timeout));
+}
+
 void scmd::batch_query::add_statement(scmd::statement &statement) {
     scmd_internal::throw_on_cass_error(cass_batch_add_statement(this->_batch, statement.get_statement()));
 }
-
