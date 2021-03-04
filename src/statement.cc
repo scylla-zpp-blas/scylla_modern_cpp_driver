@@ -40,4 +40,5 @@ void statement::set_timeout(uint64_t timeout) {
 
 void statement::reset(size_t arg_count) {
     scmd_internal::throw_on_cass_error(cass_statement_reset_parameters(_stmt, arg_count));
+}
 }  // namespace scmd
