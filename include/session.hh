@@ -2,7 +2,9 @@
 
 #include <string>
 
+#include "batch_query.hh"
 #include "cassandra.h"
+#include "future.hh"
 #include "prepared_query.hh"
 #include "query_result.hh"
 #include "statement.hh"
@@ -23,12 +25,47 @@ public:
     session(session &&other) noexcept;
     session &operator=(session &&other) noexcept;
 
+    ~session();
+
+    future execute_async(const statement &statement);
+
+    // Convenience functions to avoid creating scd_statement manually for simple queries
+    future execute_async(const std::string &query);
+
+    future execute_async(const batch_query& query);
+
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    future execute_async(const std::string &query, Args... args) {
+        return execute_async(scmd::statement(query).bind(args...));
+    }
+
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    future execute_async(const statement &statement, Args... args) {
+        return execute_async(statement.bind(args...));
+    }
+
+
     query_result execute(const statement &statement);
-    // Convenience function to avoid creating scd_statement manually for simple queries
+
+    // Convenience functions to avoid creating scd_statement manually for simple queries
     query_result execute(const std::string &query);
 
-    prepared_query prepare(std::string query);
+    query_result execute(const batch_query& query);
 
-    ~session();
+    template<typename... Args,
+            typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    query_result execute(const std::string &query, Args... args) {
+        return execute_async(scmd::statement(query).bind(args...)).get_result();
+    }
+
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    query_result execute(const statement &statement, Args... args) {
+        return execute_async(statement.bind(args...)).get_result();
+    }
+
+    prepared_query prepare(const std::string& query);
 };
 }  // namespace scmd

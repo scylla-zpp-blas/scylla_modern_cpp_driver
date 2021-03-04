@@ -17,7 +17,7 @@ set(SCYLLA_DRIVER_HEADERS
         include/value_converters/value_retriever.hh
         include/value_converters/traits.hh
         include/scmd.hh
-        )
+        include/batch_query.hh include/future.hh)
 
 set(SCYLLA_DRIVER_SOURCES
         src/exceptions.cc
@@ -29,10 +29,15 @@ set(SCYLLA_DRIVER_SOURCES
         src/value_converters/statement_binder.cc
         src/value_converters/tuple_binder.cc
         src/value_converters/value_retriever.cc
-        )
+        src/batch_query.cc src/future.cc)
 
 add_library(scylla_modern_cpp_driver SHARED "${SCYLLA_DRIVER_HEADERS}" "${SCYLLA_DRIVER_SOURCES}")
 message("CASS INCLUDE: " "${CASS_INCLUDE_DIR}")
 # Dirty hack - does anyone know how to do it properly?
 target_include_directories(scylla_modern_cpp_driver PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/lib/cpp-driver/include")
 target_link_libraries(scylla_modern_cpp_driver PUBLIC cassandra)
+
+# We are building as standalone project - build tests
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    add_subdirectory(tests)
+endif ()

@@ -7,19 +7,6 @@
 namespace scmd {
 query_result::query_result(const CassResult *res) : _result(res), _iterator(cass_iterator_from_result(res)) {}
 
-bool query_result::next_row() {
-    if (!cass_iterator_next(_iterator))
-        return false;
-
-    _row = cass_iterator_get_row(_iterator);
-    return true;
-}
-
-query_result::~query_result() {
-    cass_iterator_free(_iterator);
-    cass_result_free(_result);
-}
-
 query_result::query_result(query_result &&other) noexcept
     : _result(std::exchange(other._result, nullptr)),
       _iterator(std::exchange(other._iterator, nullptr)),
@@ -30,6 +17,23 @@ query_result &query_result::operator=(query_result &&other) noexcept {
     std::swap(_iterator, other._iterator);
     std::swap(_row, other._row);
     return *this;
+}
+
+query_result::~query_result() {
+    cass_iterator_free(_iterator);
+    cass_result_free(_result);
+}
+
+bool query_result::next_row() {
+    if (!cass_iterator_next(_iterator))
+        return false;
+
+    _row = cass_iterator_get_row(_iterator);
+    return true;
+}
+
+size_t query_result::row_count() {
+    return cass_result_row_count(this->_result);
 }
 
 const CassValue *query_result::get_column_raw(const std::string &name) {
@@ -54,4 +58,5 @@ std::string query_result::get_column_name(size_t index) {
     scmd_internal::throw_on_cass_error(cass_result_column_name(_result, index, &name, &len));
     return std::string(name, len);
 }
+
 }  // namespace scmd

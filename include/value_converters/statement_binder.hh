@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "cassandra.h"
-#include "fmt/format.h"
 
 #include "collection_appender.hh"
 #include "exceptions.hh"

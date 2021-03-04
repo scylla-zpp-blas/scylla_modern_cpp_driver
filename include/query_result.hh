@@ -21,10 +21,14 @@ public:
     query_result(query_result &&other) noexcept;
     query_result &operator=(query_result &&other) noexcept;
 
+    ~query_result();
+
     /* Prepares the next row of the request response.
      * Returns true if successful, false if there are no rows left to process.
      */
     bool next_row();
+
+    size_t row_count();
 
     /* Get the CassValue for given column in the currently processed row. */
     template <typename T>
@@ -47,8 +51,6 @@ public:
     bool is_column_null(size_t index);
 
     std::string get_column_name(size_t index);
-
-    ~query_result();
 };
 
 }  // namespace scmd
