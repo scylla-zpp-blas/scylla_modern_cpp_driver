@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <utility>
 
 
 #include "exceptions.hh"
@@ -44,19 +45,28 @@ scmd::query_result scmd::future::get_result() {
 
 scmd::prepared_query scmd::future::get_prepared() {
     const CassPrepared *result = cass_future_get_prepared(this->_future);
-    if(result == nullptr) {
-        //TODO: Maybe throw error result and/or error message?
+    if (result == nullptr) {
+        // TODO: Maybe throw error result and/or error message?
         scmd_internal::throw_on_cass_error(cass_future_error_code(this->_future));
     }
     return scmd::prepared_query(result);
 }
 
-const CassFutureCallback scmd::future::callback_fn = [](CassFuture *future, void *data) {
-  static_cast<scmd::future::callback_struct*>(data)->fn(static_cast<callback_struct*>(data)->future);
-};
+void scmd::future::set_callback_fast(scmd::future::callback_type_fast f) {
+    this->cb.future = this;
+    this->cb.fn_fast = f;
+    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd::future::callback_fn_fast, static_cast<void*>(&this->cb)));
+}
 
-void scmd::future::set_callback(scmd::future::callback_type f) {
+void scmd::future::set_callback_fast(scmd::future::callback_type_fast_bound f, void *arg) {
+    this->cb.future = this;
+    this->cb.fn_fast_bound = f;
+    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd::future::callback_fn_fast_bound, static_cast<void*>(&this->cb)));
+}
+
+void scmd::future::set_callback(const std::function<void(scmd::future*)>& f) {
     this->cb.future = this;
     this->cb.fn = f;
     scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd::future::callback_fn, static_cast<void*>(&this->cb)));
 }
+
