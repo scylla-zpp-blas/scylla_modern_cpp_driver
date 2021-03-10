@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(future_callback_fast)
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 1);
     stmt2.bind(id);
     future = session->execute_async(stmt2);
-    future.set_callback_fast([](scmd::future* finished_future) {
+    future.set_callback_fast([](scmd::future *finished_future) {
         std::cout << "Received callback - fast version" << "\n";
         scmd::query_result res = finished_future->get_result();
         BOOST_REQUIRE_EQUAL(res.row_count(), 1);
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(future_callback_fast_capturing)
     stmt2.bind(id);
     future = session->execute_async(stmt2);
 
-    scmd::future::callback_type_fast_bound cb = [](scmd::future* finished_future, void* arg) {
+    scmd::future::callback_type_fast_bound cb = [](scmd::future *finished_future, void *arg) {
         int64_t id = *static_cast<int64_t*>(arg);
         std::cout << "Received callback - fast version with binding" << "\n";
         scmd::query_result res = finished_future->get_result();
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(future_callback_std_function)
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 1);
     stmt2.bind(id);
 
-    std::function<void(int64_t, scmd::future*)> callback = [](int64_t id, scmd::future* finished_future) {
+    std::function<void(int64_t, scmd::future*)> callback = [](int64_t id, scmd::future *finished_future) {
         std::cout << "Received callback - universal version" << "\n";
         scmd::query_result res = finished_future->get_result();
         BOOST_REQUIRE_EQUAL(res.row_count(), 1);

@@ -11,7 +11,7 @@ class future {
     CassFuture *_future;
 public:
     using callback_type_fast = void(*) (future *future);
-    using callback_type_fast_bound = void(*) (future *future, void* arg);
+    using callback_type_fast_bound = void(*) (future *future, void *arg);
 
     explicit future(CassFuture *future);
 
@@ -36,14 +36,14 @@ public:
 
     void set_callback_fast(callback_type_fast f);
 
-    void set_callback_fast(callback_type_fast_bound f, void* arg);
+    void set_callback_fast(callback_type_fast_bound f, void *arg);
 
     void set_callback(const std::function<void(scmd::future*)>& f);
 
 private:
     class callback_struct {
     public:
-        scmd::future* future;
+        scmd::future *future;
         std::function<void(scmd::future*)> fn = nullptr;
         union {
             scmd::future::callback_type_fast fn_fast;
@@ -53,9 +53,9 @@ private:
             };
         };
 
-        explicit callback_struct(scmd::future* f) : future(f) {};
+        explicit callback_struct(scmd::future *f) : future(f) {};
 
-        void set_callback(const std::function<void(scmd::future*)>& fn) {
+        void set_callback(const std::function<void(scmd::future*)> &fn) {
             this->fn = fn;
         }
 
@@ -63,7 +63,7 @@ private:
             this->fn_fast = fn_fast;
         }
 
-        void set_callback(scmd::future::callback_type_fast_bound fn_fast_bound, void* arg) {
+        void set_callback(scmd::future::callback_type_fast_bound fn_fast_bound, void *arg) {
             this->fn_fast_bound = fn_fast_bound;
             this->arg = arg;
         }
