@@ -51,3 +51,12 @@ scmd::prepared_query scmd::future::get_prepared() {
     return scmd::prepared_query(result);
 }
 
+const CassFutureCallback scmd::future::callback_fn = [](CassFuture *future, void *data) {
+  static_cast<scmd::future::callback_struct*>(data)->fn(static_cast<callback_struct*>(data)->future);
+};
+
+void scmd::future::set_callback(scmd::future::callback_type f) {
+    this->cb.future = this;
+    this->cb.fn = f;
+    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd::future::callback_fn, static_cast<void*>(&this->cb)));
+}

@@ -7,6 +7,8 @@ namespace scmd {
 class future {
     CassFuture *_future;
 public:
+    using callback_type = void(*) (future *future);
+
     explicit future(CassFuture *future);
 
     // We can't really copy this class.
@@ -27,5 +29,16 @@ public:
     query_result get_result();
 
     prepared_query get_prepared();
+
+    void set_callback(callback_type f);
+
+private:
+    static const CassFutureCallback callback_fn;
+    using callback_struct = struct {
+        scmd::future* future;
+        scmd::future::callback_type fn;
+    };
+
+    callback_struct cb;
 };
 }  // namespace scmd
