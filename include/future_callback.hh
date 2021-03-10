@@ -28,7 +28,7 @@ public:
 
     explicit future_callback(scmd::future *f) : future(f){};
 
-    void set_callback(const std::function<void(scmd::future *)> &fn);
+    void set_callback(const callback_type_univeral &fn);
 
     void set_callback_fast(callback_type_fast fn_fast);
 

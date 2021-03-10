@@ -45,10 +45,10 @@ public:
 
     void set_callback_fast(callback_type_fast_bound f, void *arg);
 
-    void set_callback(const std::function<void(scmd::future*)>& f);
+    void set_callback(const callback_type_universal &f);
 
 private:
-    std::unique_ptr<scmd_internal::future_callback> cb;
+    scmd_internal::future_callback *cb;
 };
 }  // namespace scmd
 

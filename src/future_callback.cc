@@ -1,7 +1,7 @@
 #include "future_callback.hh"
 
 namespace scmd_internal {
-void future_callback::set_callback(const std::function<void(scmd::future *)> &fn) {
+void future_callback::set_callback(const callback_type_univeral &fn) {
     this->fn = fn;
 }
 

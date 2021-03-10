@@ -21,18 +21,6 @@ BOOST_AUTO_TEST_CASE(connect_wrong)
     BOOST_REQUIRE_THROW({session = std::make_unique<scmd::session>("0.0.0.0", global_config::scylla_port); }, scmd::exception);
 }
 
-BOOST_AUTO_TEST_CASE(create_keyspace)
-{
-    global_config::init();
-    std::unique_ptr<scmd::session> session = nullptr;
-    session = std::make_unique<scmd::session>(global_config::scylla_ip, global_config::scylla_port);
-    session->execute(R"(
-        CREATE KEYSPACE test_keyspace WITH REPLICATION = {
-            'class' : 'SimpleStrategy',
-            'replication_factor' : 1
-        };)");
-}
-
 BOOST_AUTO_TEST_CASE(drop_keyspace)
 {
     global_config::init();
@@ -45,6 +33,18 @@ BOOST_AUTO_TEST_CASE(drop_keyspace)
             };)");
 
     session->execute(R"(DROP KEYSPACE test_keyspace;)");
+}
+
+BOOST_AUTO_TEST_CASE(create_keyspace)
+{
+    global_config::init();
+    std::unique_ptr<scmd::session> session = nullptr;
+    session = std::make_unique<scmd::session>(global_config::scylla_ip, global_config::scylla_port);
+    session->execute(R"(
+        CREATE KEYSPACE test_keyspace WITH REPLICATION = {
+            'class' : 'SimpleStrategy',
+            'replication_factor' : 1
+        };)");
 }
 
 BOOST_AUTO_TEST_CASE(move_semantics)

@@ -7,8 +7,9 @@
 #include "prepared_query.hh"
 
 scmd::future::future(CassFuture *future) :
-      _future(future),
-      cb(std::make_unique<scmd_internal::future_callback>(this)) {}
+      _future(future) {
+    cb = new scmd_internal::future_callback(this);
+}
 
 
 scmd::future::future(scmd::future &&other) noexcept
@@ -26,6 +27,7 @@ scmd::future &scmd::future::operator=(scmd::future &&other) noexcept {
 
 scmd::future::~future() {
     cass_future_free(this->_future);
+    delete cb;
 }
 
 bool scmd::future::is_ready() {
@@ -60,16 +62,16 @@ scmd::prepared_query scmd::future::get_prepared() {
 
 void scmd::future::set_callback_fast(scmd::future::callback_type_fast f) {
     this->cb->set_callback_fast(f);
-    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd_internal::future_callback::callback_fn_fast, static_cast<void*>(&this->cb)));
+    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd_internal::future_callback::callback_fn_fast, static_cast<void*>(this->cb)));
 }
 
 void scmd::future::set_callback_fast(scmd::future::callback_type_fast_bound f, void *arg) {
     this->cb->set_callback_fast(f, arg);
-    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd_internal::future_callback::callback_fn_fast_bound, static_cast<void*>(&this->cb)));
+    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd_internal::future_callback::callback_fn_fast_bound, static_cast<void*>(this->cb)));
 }
 
-void scmd::future::set_callback(const std::function<void(scmd::future*)> &f) {
+void scmd::future::set_callback(const callback_type_universal &f) {
     this->cb->set_callback(f);
-    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd_internal::future_callback::callback_fn, static_cast<void*>(&this->cb)));
+    scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd_internal::future_callback::callback_fn, static_cast<void*>(this->cb)));
 }
 
