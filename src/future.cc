@@ -53,20 +53,17 @@ scmd::prepared_query scmd::future::get_prepared() {
 }
 
 void scmd::future::set_callback_fast(scmd::future::callback_type_fast f) {
-    this->cb.future = this;
-    this->cb.fn_fast = f;
+    this->cb.set_callback(f);
     scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd::future::callback_fn_fast, static_cast<void*>(&this->cb)));
 }
 
 void scmd::future::set_callback_fast(scmd::future::callback_type_fast_bound f, void *arg) {
-    this->cb.future = this;
-    this->cb.fn_fast_bound = f;
+    this->cb.set_callback(f, arg);
     scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd::future::callback_fn_fast_bound, static_cast<void*>(&this->cb)));
 }
 
 void scmd::future::set_callback(const std::function<void(scmd::future*)>& f) {
-    this->cb.future = this;
-    this->cb.fn = f;
+    this->cb.set_callback(f);
     scmd_internal::throw_on_cass_error(cass_future_set_callback(this->_future, scmd::future::callback_fn, static_cast<void*>(&this->cb)));
 }
 

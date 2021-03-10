@@ -1,4 +1,7 @@
 #pragma once
+
+#include <functional>
+
 #include "cassandra.h"
 #include "prepared_query.hh"
 #include "query_result.hh"
@@ -38,19 +41,35 @@ public:
     void set_callback(const std::function<void(scmd::future*)>& f);
 
 private:
-    using callback_struct = struct {
+    class callback_struct {
+    public:
         scmd::future* future;
+        std::function<void(scmd::future*)> fn = nullptr;
         union {
-            std::function<void(scmd::future*)> fn;
             scmd::future::callback_type_fast fn_fast;
             struct {
                 scmd::future::callback_type_fast_bound fn_fast_bound;
                 void *arg;
             };
         };
+
+        explicit callback_struct(scmd::future* f) : future(f) {};
+
+        void set_callback(const std::function<void(scmd::future*)>& fn) {
+            this->fn = fn;
+        }
+
+        void set_callback(scmd::future::callback_type_fast fn_fast) {
+            this->fn_fast = fn_fast;
+        }
+
+        void set_callback(scmd::future::callback_type_fast_bound fn_fast_bound, void* arg) {
+            this->fn_fast_bound = fn_fast_bound;
+            this->arg = arg;
+        }
     };
 
-    callback_struct cb;
+    callback_struct cb{this};
 
     static const inline CassFutureCallback callback_fn_fast = [](CassFuture *future, void *data) {
       static_cast<scmd::future::callback_struct*>(data)->fn_fast(static_cast<callback_struct*>(data)->future);
