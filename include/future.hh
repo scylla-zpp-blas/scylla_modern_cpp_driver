@@ -36,11 +36,6 @@ public:
 
     prepared_query get_prepared();
 
-    /* IMPORTANT WARNING */
-    // After setting callback, the object must not be destroyed
-    // until after callback is called.
-    // If you move-construct other future using future with callback set, both new and old object
-    // must not be destroyed until after callback is called.
     void set_callback_fast(callback_type_fast f);
 
     void set_callback_fast(callback_type_fast_bound f, void *arg);
