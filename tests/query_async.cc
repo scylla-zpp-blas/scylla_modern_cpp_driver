@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(future_callback_fast)
         // No state - so no capturing id
         // BOOST_REQUIRE(ARGS_TUPLE(id) == row);
     });
-    future.wait(); // Prevent destruction.
+    future.wait(); // Prevent destruction until the end of test.
 }
 
 BOOST_AUTO_TEST_CASE(future_callback_fast_capturing)
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(future_callback_fast_capturing)
     };
 
     future.set_callback_fast(cb, &id);
-    future.wait(); // Prevent destruction and wait for test and.
+    future.wait(); // Prevent destruction until the end of test.
 }
 
 BOOST_AUTO_TEST_CASE(future_callback_std_function)
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE(future_callback_std_function)
 
     future = session->execute_async(stmt2);
     future.set_callback(std::bind(callback, id, std::placeholders::_1));
-    future.wait(); // Prevent destruction.
+    future.wait(); // Prevent destruction until the end of test.
 }
 
 BOOST_AUTO_TEST_SUITE_END();
