@@ -35,7 +35,6 @@ session &session::operator=(session &&other) noexcept {
 
 session::~session() {
     if(this->_session) {
-        cass_session_close(this->_session);
         cass_session_free(_session);
     }
     if(this->_cluster) {
