@@ -42,7 +42,7 @@ public:
 
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
-    future execute_async(const statement &statement, Args... args) {
+    future execute_async(statement &statement, Args... args) {
         return execute_async(statement.bind(args...));
     }
 
@@ -62,7 +62,7 @@ public:
 
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
-    query_result execute(const statement &statement, Args... args) {
+    query_result execute(statement &statement, Args... args) {
         return execute_async(statement.bind(args...)).get_result();
     }
 
