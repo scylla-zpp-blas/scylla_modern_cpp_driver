@@ -55,11 +55,11 @@ BOOST_AUTO_TEST_CASE(not_enough_args)
     int64_t id = generate_id();
     stmt.bind<TYPES>(id, ARGS);
     auto future = session->execute_async(stmt);
-    future.wait();
+    BOOST_REQUIRE_THROW(future.wait(), scmd::exception);
 
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 2);
     stmt2.bind(id);
-    BOOST_REQUIRE_THROW(session->execute(stmt2), scmd::exception);;
+    BOOST_REQUIRE_THROW(session->execute(stmt2), scmd::exception);
 }
 
 BOOST_AUTO_TEST_CASE(future_callback_fast)

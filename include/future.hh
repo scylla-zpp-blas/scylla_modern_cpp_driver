@@ -28,6 +28,8 @@ public:
 
     bool is_ready();
 
+    void throw_errors();
+
     void wait();
 
     bool wait(uint64_t ms);

@@ -34,19 +34,36 @@ bool scmd::future::is_ready() {
     return cass_future_ready(this->_future) == cass_true;
 }
 
+void scmd::future::throw_errors() {
+    //TODO: Maybe throw error result and/or error message?
+    const char* msg;
+    size_t len;
+    cass_future_error_message(this->_future, &msg, &len);
+    std::string s(msg, len);
+    throw scmd::exception(cass_future_error_code(this->_future), s);
+}
+
 void scmd::future::wait() {
     cass_future_wait(this->_future);
+    if(cass_future_error_code(this->_future) != CASS_OK) {
+        throw_errors();
+    }
 }
 
 bool scmd::future::wait(uint64_t ms) {
-    return cass_future_wait_timed(this->_future, ms);
+    bool ret = cass_future_wait_timed(this->_future, ms);
+    if(ret) {
+        if(cass_future_error_code(this->_future) != CASS_OK) {
+            throw_errors();
+        }
+    }
+    return ret;
 }
 
 scmd::query_result scmd::future::get_result() {
     const CassResult *result = cass_future_get_result(this->_future);
     if(result == nullptr) {
-        //TODO: Maybe throw error result and/or error message?
-        scmd_internal::throw_on_cass_error(cass_future_error_code(this->_future));
+        throw_errors();
     }
     return scmd::query_result(result);
 }
@@ -54,8 +71,7 @@ scmd::query_result scmd::future::get_result() {
 scmd::prepared_query scmd::future::get_prepared() {
     const CassPrepared *result = cass_future_get_prepared(this->_future);
     if (result == nullptr) {
-        // TODO: Maybe throw error result and/or error message?
-        scmd_internal::throw_on_cass_error(cass_future_error_code(this->_future));
+        throw_errors();
     }
     return scmd::prepared_query(result);
 }
