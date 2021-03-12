@@ -39,7 +39,7 @@ public:
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     future execute_async(const std::string &query, Args... args) {
-        return execute_async(scmd::statement(query).bind(args...));
+        return execute_async(scmd::statement(query, sizeof...(args)).bind(args...));
     }
 
     template<typename... Args,
@@ -68,7 +68,7 @@ public:
     template<typename... Args,
             typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     query_result execute(const std::string &query, Args... args) {
-        return execute_async(scmd::statement(query).bind(args...)).get_result();
+        return execute_async(scmd::statement(query, sizeof...(args)).bind(args...)).get_result();
     }
 
     template<typename... Args,
