@@ -34,6 +34,8 @@ public:
 
     future execute_async(const batch_query& query);
 
+    future execute_async(const prepared_query& query);
+
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     future execute_async(const std::string &query, Args... args) {
@@ -46,6 +48,13 @@ public:
         return execute_async(statement.bind(args...));
     }
 
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    future execute_async(const prepared_query& query, Args... args) {
+        auto statement = query.get_statement();
+        return execute_async(statement.bind(args...));
+    }
+
 
     query_result execute(const statement &statement);
 
@@ -53,6 +62,8 @@ public:
     query_result execute(const std::string &query);
 
     query_result execute(const batch_query& query);
+
+    query_result execute(const prepared_query& query);
 
     template<typename... Args,
             typename = typename std::enable_if<0 != sizeof...(Args)>::type>
@@ -63,6 +74,13 @@ public:
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     query_result execute(statement &statement, Args... args) {
+        return execute_async(statement.bind(args...)).get_result();
+    }
+
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    query_result execute(const prepared_query& query, Args... args) {
+        auto statement = query.get_statement();
         return execute_async(statement.bind(args...)).get_result();
     }
 
