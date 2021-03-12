@@ -3,6 +3,7 @@
 #include <string>
 
 #include "cassandra.h"
+#include "exceptions.hh"
 
 namespace scmd_internal {
 // TODO: implement uuid, inet, bytes, decimal, duration, dse_date_range, dse_point
