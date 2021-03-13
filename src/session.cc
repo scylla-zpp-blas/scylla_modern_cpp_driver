@@ -35,7 +35,6 @@ session &session::operator=(session &&other) noexcept {
 
 session::~session() {
     if(this->_session) {
-        cass_session_close(this->_session);
         cass_session_free(_session);
     }
     if(this->_cluster) {
@@ -55,6 +54,12 @@ future session::execute_async(const batch_query &query) {
     return future(cass_session_execute_batch(_session, query.get_query()));
 }
 
+future session::execute_async(const prepared_query &query) {
+    auto statement = query.get_statement();
+    return execute_async(statement);
+}
+
+
 query_result session::execute(const statement &statement) {
     return execute_async(statement).get_result();
 }
@@ -70,6 +75,10 @@ query_result session::execute(const batch_query &query) {
 prepared_query session::prepare(const std::string& query) {
     scmd::future future(cass_session_prepare(_session, query.c_str()));
     return future.get_prepared();
+}
+query_result session::execute(const prepared_query &query) {
+    auto statement = query.get_statement();
+    return execute(statement);
 }
 
 }  // namespace scmd

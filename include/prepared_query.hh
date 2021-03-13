@@ -23,6 +23,6 @@ public:
 
     ~prepared_query();
 
-    statement get_statement();
+    [[nodiscard]] statement get_statement() const;
 };
 }  // namespace scmd

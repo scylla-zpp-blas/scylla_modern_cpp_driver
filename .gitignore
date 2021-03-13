@@ -4,5 +4,6 @@ tasks.xml
 cmake-build-debug/
 build/
 scylla_data/
+.gdb_history
 
 

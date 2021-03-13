@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.17.5)
 project(scylla_modern_cpp_driver)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -15,9 +15,8 @@ set(SCYLLA_DRIVER_HEADERS
         include/value_converters/statement_binder.hh
         include/value_converters/tuple_binder.hh
         include/value_converters/value_retriever.hh
-        include/value_converters/traits.hh
         include/scmd.hh
-        include/batch_query.hh include/future.hh)
+        include/batch_query.hh include/future.hh include/future_callback.hh)
 
 set(SCYLLA_DRIVER_SOURCES
         src/exceptions.cc
@@ -25,11 +24,9 @@ set(SCYLLA_DRIVER_SOURCES
         src/query_result.cc
         src/session.cc
         src/statement.cc
-        src/value_converters/collection_appender.cc
-        src/value_converters/statement_binder.cc
-        src/value_converters/tuple_binder.cc
-        src/value_converters/value_retriever.cc
-        src/batch_query.cc src/future.cc)
+        src/batch_query.cc
+        src/future.cc
+        src/future_callback.cc)
 
 add_library(scylla_modern_cpp_driver SHARED "${SCYLLA_DRIVER_HEADERS}" "${SCYLLA_DRIVER_SOURCES}")
 message("CASS INCLUDE: " "${CASS_INCLUDE_DIR}")
