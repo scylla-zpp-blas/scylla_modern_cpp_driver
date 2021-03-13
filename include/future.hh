@@ -13,7 +13,7 @@ class future {
 public:
     using callback_type_fast = scmd_internal::callback_type_fast;
     using callback_type_fast_bound = scmd_internal::callback_type_fast_bound;
-    using callback_type_universal = scmd_internal::callback_type_univeral;
+    using callback_type_universal = scmd_internal::callback_type_universal;
 
     explicit future(CassFuture *future);
 
