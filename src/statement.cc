@@ -39,7 +39,8 @@ statement &statement::set_timeout(uint64_t timeout) {
     return *this;
 }
 
-void statement::reset(size_t arg_count) {
+statement &statement::reset(size_t arg_count) {
     scmd_internal::throw_on_cass_error(cass_statement_reset_parameters(_stmt, arg_count));
+    return *this;
 }
 }  // namespace scmd

@@ -38,6 +38,6 @@ public:
 
     statement &set_timeout(uint64_t timeout);
 
-    void reset(size_t arg_count);
+    statement &reset(size_t arg_count);
 };
 }  // namespace scmd
