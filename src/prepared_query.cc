@@ -18,7 +18,9 @@ prepared_query &prepared_query::operator=(prepared_query &&other) noexcept {
     return *this;
 }
 prepared_query::~prepared_query() {
-    cass_prepared_free(_prepared);
+    if(_prepared) {
+        cass_prepared_free(_prepared);
+    }
 }
 
 }  // namespace scmd
