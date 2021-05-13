@@ -38,6 +38,8 @@ public:
 
     prepared_query get_prepared();
 
+    const CassPrepared *get_prepared_raw();
+
     void set_callback_fast(callback_type_fast f);
 
     void set_callback_fast(callback_type_fast_bound f, void *arg);

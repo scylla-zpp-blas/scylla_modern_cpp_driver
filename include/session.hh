@@ -27,53 +27,90 @@ public:
 
     ~session();
 
+    prepared_query prepare(const std::string &query);
+
+    const CassPrepared *prepare_raw(const std::string& query);
+
     future execute_async(const statement &statement);
+    future execute_async(const statement &&statement);
 
     // Convenience functions to avoid creating scd_statement manually for simple queries
     future execute_async(const std::string &query);
+    future execute_async(const std::string &&query);
 
-    future execute_async(const batch_query& query);
+    future execute_async(const batch_query &query);
+    future execute_async(const batch_query &&query);
 
-    future execute_async(const prepared_query& query);
+    future execute_async(const prepared_query &query);
+    future execute_async(const prepared_query &&query);
 
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     future execute_async(const std::string &query, Args... args) {
         return execute_async(scmd::statement(query, sizeof...(args)).bind(args...));
     }
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    future execute_async(const std::string &&query, Args... args) {
+        return execute_async(scmd::statement(query, sizeof...(args)).bind(args...));
+    }
+
 
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     future execute_async(statement &statement, Args... args) {
         return execute_async(statement.bind(args...));
     }
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    future execute_async(const statement &&statement, Args... args) {
+        return execute_async(statement.bind(args...));
+    }
 
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
-    future execute_async(const prepared_query& query, Args... args) {
-        auto statement = query.get_statement();
-        return execute_async(statement.bind(args...));
+    future execute_async(const prepared_query &query, Args... args) {
+        return execute_async(query.get_statement().bind(args...));
+    }
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    future execute_async(const prepared_query &&query, Args... args) {
+        return execute_async(query.get_statement().bind(args...));
     }
 
 
     query_result execute(const statement &statement);
+    query_result execute(const statement &&statement);
 
     // Convenience functions to avoid creating scd_statement manually for simple queries
     query_result execute(const std::string &query);
+    query_result execute(const std::string &&query);
 
-    query_result execute(const batch_query& query);
+    query_result execute(const batch_query &query);
+    query_result execute(const batch_query &&query);
 
-    query_result execute(const prepared_query& query);
+    query_result execute(const prepared_query &query);
+    query_result execute(const prepared_query &&query);
 
     template<typename... Args,
             typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     query_result execute(const std::string &query, Args... args) {
         return execute_async(scmd::statement(query, sizeof...(args)).bind(args...)).get_result();
     }
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    query_result execute(const std::string &&query, Args... args) {
+        return execute_async(scmd::statement(query, sizeof...(args)).bind(args...)).get_result();
+    }
 
     template<typename... Args,
         typename = typename std::enable_if<0 != sizeof...(Args)>::type>
     query_result execute(statement &statement, Args... args) {
+        return execute_async(statement.bind(args...)).get_result();
+    }
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    query_result execute(statement &&statement, Args... args) {
         return execute_async(statement.bind(args...)).get_result();
     }
 
@@ -83,7 +120,11 @@ public:
         auto statement = query.get_statement();
         return execute_async(statement.bind(args...)).get_result();
     }
-
-    prepared_query prepare(const std::string& query);
+    template<typename... Args,
+        typename = typename std::enable_if<0 != sizeof...(Args)>::type>
+    query_result execute(const prepared_query &&query, Args... args) {
+        auto statement = query.get_statement();
+        return execute_async(statement.bind(args...)).get_result();
+    }
 };
 }  // namespace scmd

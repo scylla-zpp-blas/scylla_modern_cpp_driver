@@ -1,8 +1,13 @@
 #include "prepared_query.hh"
+#include "session.hh"
+
 #include "cassandra.h"
 
 namespace scmd {
 prepared_query::prepared_query(const CassPrepared *prepared) : _prepared(prepared) {}
+
+prepared_query::prepared_query(session &s, const std::string &query) :
+      prepared_query(s.prepare_raw(query)) {}
 
 scmd::statement prepared_query::get_statement() const {
     CassStatement *stmt = cass_prepared_bind(_prepared);

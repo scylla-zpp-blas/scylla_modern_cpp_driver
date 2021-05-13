@@ -11,24 +11,18 @@ BOOST_FIXTURE_TEST_SUITE(prepared_statement, scylla_fixture)
 BOOST_AUTO_TEST_CASE(insert)
 {
     scmd::prepared_query prep = session->prepare("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);");
-    scmd::statement stmt = prep.get_statement();
-    int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    session->execute(stmt);
+    session->execute(prep, generate_id(), ARGS);
 }
 
 BOOST_AUTO_TEST_CASE(select)
 {
-    scmd::prepared_query prep = session->prepare("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);");
-    scmd::statement stmt = prep.get_statement();
     int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    session->execute(stmt);
+
+    scmd::prepared_query prep = session->prepare("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);");
+    session->execute(prep, id, ARGS);
 
     prep = session->prepare("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;");
-    stmt = prep.get_statement();
-    stmt.bind(id);
-    scmd::query_result res = session->execute(stmt);
+    scmd::query_result res = session->execute(prep, id);
 
     BOOST_REQUIRE_EQUAL(res.row_count(), 1);
     res.next_row();

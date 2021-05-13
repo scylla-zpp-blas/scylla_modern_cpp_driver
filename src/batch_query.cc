@@ -1,4 +1,7 @@
+#include <utility>
+
 #include "batch_query.hh"
+#include "statement.hh"
 #include "exceptions.hh"
 
 scmd::batch_query::batch_query(CassBatchType type) {

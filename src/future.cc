@@ -69,11 +69,15 @@ scmd::query_result scmd::future::get_result() {
 }
 
 scmd::prepared_query scmd::future::get_prepared() {
+    return scmd::prepared_query(get_prepared_raw());
+}
+
+const CassPrepared *scmd::future::get_prepared_raw() {
     const CassPrepared *result = cass_future_get_prepared(this->_future);
     if (result == nullptr) {
         throw_errors();
     }
-    return scmd::prepared_query(result);
+    return result;
 }
 
 void scmd::future::set_callback_fast(scmd::future::callback_type_fast f) {

@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-#define ARGS 115, 3456, 104755, 123341233124, 30.75, 32342.23, std::string("sadasdasda")
+#define ARGS int8_t(115), int16_t(3456), int32_t(104755), int64_t(123341233124), float(30.75), double(32342.23), std::string("sadasdasda")
 #define TYPES int64_t, int8_t, int16_t, int32_t, int64_t, float, double, std::string
 #define ARGS_TUPLE(id) std::make_tuple(id, ARGS)
 #define RESULT_TUPLE(r) std::make_tuple(r.get_column<int64_t>("key"), \

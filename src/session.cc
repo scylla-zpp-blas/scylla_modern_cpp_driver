@@ -42,15 +42,34 @@ session::~session() {
     }
 }
 
+prepared_query session::prepare(const std::string& query) {
+    scmd::future future(cass_session_prepare(_session, query.c_str()));
+    return future.get_prepared();
+}
+
+const CassPrepared *session::prepare_raw(const std::string &query) {
+    scmd::future future(cass_session_prepare(_session, query.c_str()));
+    return future.get_prepared_raw();
+}
+
 future session::execute_async(const statement &statement) {
+    return future(cass_session_execute(_session, statement.get_statement()));
+}
+future session::execute_async(const statement &&statement) {
     return future(cass_session_execute(_session, statement.get_statement()));
 }
 
 future session::execute_async(const std::string &query) {
     return execute_async(statement(query));
 }
+future session::execute_async(const std::string &&query) {
+    return execute_async(statement(query));
+}
 
 future session::execute_async(const batch_query &query) {
+    return future(cass_session_execute_batch(_session, query.get_query()));
+}
+future session::execute_async(const batch_query &&query) {
     return future(cass_session_execute_batch(_session, query.get_query()));
 }
 
@@ -58,25 +77,38 @@ future session::execute_async(const prepared_query &query) {
     auto statement = query.get_statement();
     return execute_async(statement);
 }
+future session::execute_async(const prepared_query &&query) {
+    return execute_async(query.get_statement());
+}
 
 
 query_result session::execute(const statement &statement) {
     return execute_async(statement).get_result();
 }
+query_result session::execute(const statement &&statement) {
+    return execute_async(statement).get_result();
+}
+
 
 query_result session::execute(const std::string &query) {
+    return execute_async(query).get_result();
+}
+query_result session::execute(const std::string &&query) {
     return execute_async(query).get_result();
 }
 
 query_result session::execute(const batch_query &query) {
     return execute_async(query).get_result();
 }
-
-prepared_query session::prepare(const std::string& query) {
-    scmd::future future(cass_session_prepare(_session, query.c_str()));
-    return future.get_prepared();
+query_result session::execute(const batch_query &&query) {
+    return execute_async(query).get_result();
 }
+
 query_result session::execute(const prepared_query &query) {
+    auto statement = query.get_statement();
+    return execute(statement);
+}
+query_result session::execute(const prepared_query &&query) {
     auto statement = query.get_statement();
     return execute(statement);
 }

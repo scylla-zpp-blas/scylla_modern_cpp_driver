@@ -10,24 +10,21 @@ BOOST_FIXTURE_TEST_SUITE(async_query, scylla_fixture)
 
 BOOST_AUTO_TEST_CASE(insert)
 {
-    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 8);
     int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    auto future = session->execute_async(stmt);
+    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 8);
+    auto future = session->execute_async(stmt, id, ARGS);
     future.wait();
 }
 
 BOOST_AUTO_TEST_CASE(select)
 {
-    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 8);
     int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    auto future = session->execute_async(stmt);
+    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 8);
+    auto future = session->execute_async(stmt, id, ARGS);
     future.wait();
 
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 1);
-    stmt2.bind(id);
-    future = session->execute_async(stmt2);
+    future = session->execute_async(stmt2, id);
     scmd::query_result res = future.get_result();
 
 
@@ -39,9 +36,8 @@ BOOST_AUTO_TEST_CASE(select)
 
 BOOST_AUTO_TEST_CASE(too_many_args)
 {
-
-    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 7);
     int64_t id = generate_id();
+    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 7);
     BOOST_REQUIRE_THROW(stmt.bind(id, ARGS), scmd::exception);
 
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 0);
@@ -50,11 +46,10 @@ BOOST_AUTO_TEST_CASE(too_many_args)
 
 BOOST_AUTO_TEST_CASE(not_enough_args)
 {
-
-    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 9);
     int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    auto future = session->execute_async(stmt);
+    scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 9);
+    stmt;
+    auto future = session->execute_async(stmt, id, ARGS);
     BOOST_REQUIRE_THROW(future.wait(), scmd::exception);
 
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 2);
@@ -66,13 +61,11 @@ BOOST_AUTO_TEST_CASE(future_callback_fast)
 {
     scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 8);
     int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    auto future = session->execute_async(stmt);
+    auto future = session->execute_async(stmt, id, ARGS);
     future.wait();
 
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 1);
-    stmt2.bind(id);
-    future = session->execute_async(stmt2);
+    future = session->execute_async(stmt2, id);
     future.set_callback_fast([](scmd::future *finished_future) {
         std::cout << "Received callback - fast version" << "\n";
         scmd::query_result res = finished_future->get_result();
@@ -89,13 +82,11 @@ BOOST_AUTO_TEST_CASE(future_callback_fast_capturing)
 {
     scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 8);
     int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    auto future = session->execute_async(stmt);
+    auto future = session->execute_async(stmt, id, ARGS);
     future.wait();
 
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 1);
-    stmt2.bind(id);
-    future = session->execute_async(stmt2);
+    future = session->execute_async(stmt2, id);
 
     scmd::future::callback_type_fast_bound cb = [](scmd::future *finished_future, void *arg) {
         int64_t id = *static_cast<int64_t*>(arg);
@@ -115,12 +106,10 @@ BOOST_AUTO_TEST_CASE(future_callback_std_function)
 {
     scmd::statement stmt("INSERT INTO test_keyspace.test_table (key, a, b, c, d, e, f, g) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?);", 8);
     int64_t id = generate_id();
-    stmt.bind<TYPES>(id, ARGS);
-    auto future = session->execute_async(stmt);
+    auto future = session->execute_async(stmt, id, ARGS);
     future.wait();
 
     scmd::statement stmt2("SELECT key, a, b, c, d, e, f, g FROM test_keyspace.test_table WHERE key = ?;", 1);
-    stmt2.bind(id);
 
     std::function<void(int64_t, scmd::future*)> callback = [](int64_t id, scmd::future *finished_future) {
         std::cout << "Received callback - universal version" << "\n";
@@ -131,7 +120,7 @@ BOOST_AUTO_TEST_CASE(future_callback_std_function)
         BOOST_REQUIRE(ARGS_TUPLE(id) == row);
     };
 
-    future = session->execute_async(stmt2);
+    future = session->execute_async(stmt2, id);
     future.set_callback(std::bind(callback, id, std::placeholders::_1));
     future.wait(); // Prevent destruction until the end of test.
 }
