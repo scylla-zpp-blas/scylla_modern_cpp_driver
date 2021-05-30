@@ -1,9 +1,13 @@
 #pragma once
+
+#include <string>
+
 #include "cassandra.h"
 
-#include "statement.hh"
-
 namespace scmd {
+
+class statement;
+
 class batch_query {
 private:
     CassBatch *_batch;

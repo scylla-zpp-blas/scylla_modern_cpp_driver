@@ -16,6 +16,8 @@ public:
     explicit statement(CassStatement *stmt);
     statement(const std::string &query, size_t arg_count);
     explicit statement(const std::string &query);
+    statement(std::string &&query, size_t arg_count);
+    explicit statement(std::string &&query);
 
     // We can't really copy this class
     statement(const statement &other) = delete;

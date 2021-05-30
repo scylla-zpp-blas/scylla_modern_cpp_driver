@@ -4,15 +4,19 @@
 #include <stdexcept>
 #include <string>
 
-#include "statement.hh"
-#include "value_converters/statement_binder.hh"
+#include "cassandra.h"
 
 namespace scmd {
+
+class session;
+class statement;
+
 class prepared_query {
     const CassPrepared *_prepared;
 
 public:
     explicit prepared_query(const CassPrepared *prepared);
+    prepared_query(session &s, const std::string &query);
 
     // We can't really copy this class
     prepared_query(const prepared_query &other) = delete;
