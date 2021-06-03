@@ -26,8 +26,12 @@ scmd::future &scmd::future::operator=(scmd::future &&other) noexcept {
 }
 
 scmd::future::~future() {
-    cass_future_free(this->_future);
-    delete cb;
+    if(this->_future) {
+        cass_future_free(this->_future);
+    }
+    if (cb) {
+        delete cb;
+    }
 }
 
 bool scmd::future::is_ready() {
