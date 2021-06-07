@@ -3,6 +3,9 @@ project(scylla_modern_cpp_driver)
 
 set(CMAKE_CXX_STANDARD 17)
 
+set(CASS_BUILD_STATIC ON)
+set(CASS_BUILD_SHARED ON)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 add_subdirectory(lib/cpp-driver EXCLUDE_FROM_ALL)
 
 set(SCYLLA_DRIVER_HEADERS
@@ -32,7 +35,14 @@ add_library(scylla_modern_cpp_driver SHARED "${SCYLLA_DRIVER_HEADERS}" "${SCYLLA
 message("CASS INCLUDE: " "${CASS_INCLUDE_DIR}")
 # Dirty hack - does anyone know how to do it properly?
 target_include_directories(scylla_modern_cpp_driver PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/lib/cpp-driver/include")
-target_link_libraries(scylla_modern_cpp_driver PUBLIC cassandra)
+target_link_libraries(scylla_modern_cpp_driver PUBLIC scylla-cpp-driver)
+
+add_library(scylla_modern_cpp_driver_static STATIC "${SCYLLA_DRIVER_HEADERS}" "${SCYLLA_DRIVER_SOURCES}")
+message("CASS INCLUDE: " "${CASS_INCLUDE_DIR}")
+# Dirty hack - does anyone know how to do it properly?
+target_include_directories(scylla_modern_cpp_driver_static PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_CURRENT_SOURCE_DIR}/lib/cpp-driver/include")
+target_link_libraries(scylla_modern_cpp_driver_static PUBLIC cassandra_static)
+
 
 # We are building as standalone project - build tests
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)

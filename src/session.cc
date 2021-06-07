@@ -11,6 +11,7 @@ session::session(const std::string &address, const std::string &port) {
     _session = cass_session_new();
 
     cass_cluster_set_contact_points(_cluster, address.c_str());
+    cass_cluster_set_local_port_range(_cluster, 50000, 60000);
 
     if (!port.empty()) {
         cass_cluster_set_port(_cluster, std::stoi(port));
